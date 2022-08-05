@@ -118,26 +118,42 @@ app.get('/', async(req, res, next)=> {
                 }).join('')
               }
             </ul>
-            <form method='post' action='/bookmarks'>
-              <input placeholder='name' name='name'/>
-              <input placeholder='url' placeholder='url'/>
-              <select name='categoryId'>
-                ${
-                  categories.map( category => {
-                    return `
-                      <option value='${ category.id}'>
-                        ${ category.name }
-                      </option>
-                    `;
-                  }).join('')
-                }
-              </select>
-              <button>Create</button>
-            </form>
+            <div>
+              <form method='POST' action='/categories'>
+                <input name='name' placeholder='name' />
+                <button>Create Category</button>
+              </form>
+              <form method='post' action='/bookmarks'>
+                <input placeholder='name' name='name'/>
+                <input placeholder='url' placeholder='url'/>
+                <select name='categoryId'>
+                  ${
+                    categories.map( category => {
+                      return `
+                        <option value='${ category.id}'>
+                          ${ category.name }
+                        </option>
+                      `;
+                    }).join('')
+                  }
+                </select>
+                <button>Create Bookmark</button>
+              </form>
+            </div>
           </main>
         </body>
       </html>
     `);
+  }
+  catch(ex){
+    next(ex);
+  }
+});
+
+app.post('/categories', async(req, res, next)=> {
+  try {
+    await Category.create(req.body);
+    res.redirect('/');
   }
   catch(ex){
     next(ex);
