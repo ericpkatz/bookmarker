@@ -7,6 +7,6 @@
   - delete-a-bookmark <a href='https://github.com/ericpkatz/bookmarker/compare/form...delete-a-bookmark?expand=1'>Compare</a>
     - introduce method-override
   - create-category <a href='https://github.com/ericpkatz/bookmarker/compare/delete-a-bookmark...create-category?expand=1'>Compare</a>
-  - validation
+  - validation <a href='https://github.com/ericpkatz/bookmarker/compare/create-category...validation?expand=1'>Compare</a>
   - refactor-data-layer
   - refactor-routes
