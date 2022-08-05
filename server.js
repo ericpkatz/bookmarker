@@ -8,16 +8,28 @@ const conn = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost/boo
 
 const Category = conn.define('category', {
   name: {
-    type: Sequelize.STRING
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
   }
 });
 
 const Bookmark = conn.define('bookmark', {
   name: {
-    type: Sequelize.STRING
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: true
+    }
   },
   url: {
-    type: Sequelize.STRING
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      isUrl: true 
+    }
   }
 });
 
@@ -125,7 +137,7 @@ app.get('/', async(req, res, next)=> {
               </form>
               <form method='post' action='/bookmarks'>
                 <input placeholder='name' name='name'/>
-                <input placeholder='url' placeholder='url'/>
+                <input placeholder='url' placeholder='url' name='url'/>
                 <select name='categoryId'>
                   ${
                     categories.map( category => {
