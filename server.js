@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+app.use(express.urlencoded({ extended: false }));
 
 const Sequelize = require('sequelize');
 const conn = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost/bookmarker');
@@ -33,10 +34,10 @@ app.get('/categories/:id', async(req, res, next)=> {
         </head>
         <body>
           <h1>Bookmarker - ${ category.name }</h1>
+          <a href='/'>Home</a>
           <ul>
             ${
               category.bookmarks.map( bookmark => {
-                console.log(bookmark);
                 return `
                   <li>
                     ${ bookmark.name }
@@ -54,31 +55,79 @@ app.get('/categories/:id', async(req, res, next)=> {
   }
 });
 
+app.post('/bookmarks', async(req, res, next)=> {
+  try {
+    const bookmark = await Bookmark.create(req.body);
+    res.redirect(`/categories/${bookmark.categoryId}`);
+  }
+  catch(ex){
+    next(ex);
+  }
+});
 app.get('/', async(req, res, next)=> {
   try {
     const bookmarks = await Bookmark.findAll({
       include: [ Category ]
     });
+    const categories = await Category.findAll();
     res.send(`
       <html>
         <head>
+          <style>
+            main {
+              display: flex;
+            }
+            main > * {
+              flex: 1;
+              margin: 1rem;
+            }
+            form {
+              display: flex;
+              flex-direction: column;
+            }
+            input,select,button {
+              height: 2rem;
+
+            }
+            form > * {
+              margin: 1rem;
+            }
+          </style>
         </head>
         <body>
           <h1>Bookmarker</h1>
-          <ul>
-            ${
-              bookmarks.map( bookmark => {
-                return `
-                  <li>
-                    ${ bookmark.name } 
-                    <a href='/categories/${ bookmark.categoryId }'>
-                      ${ bookmark.category.name }
-                    </a>
-                  </li>
-                `;
-              }).join('')
-            }
-          </ul>
+          <main>
+            <ul>
+              ${
+                bookmarks.map( bookmark => {
+                  return `
+                    <li>
+                      ${ bookmark.name } 
+                      <a href='/categories/${ bookmark.categoryId }'>
+                        ${ bookmark.category.name }
+                      </a>
+                    </li>
+                  `;
+                }).join('')
+              }
+            </ul>
+            <form method='post' action='/bookmarks'>
+              <input placeholder='name' name='name'/>
+              <input placeholder='url' placeholder='url'/>
+              <select name='categoryId'>
+                ${
+                  categories.map( category => {
+                    return `
+                      <option value='${ category.id}'>
+                        ${ category.name }
+                      </option>
+                    `;
+                  }).join('')
+                }
+              </select>
+              <button>Create</button>
+            </form>
+          </main>
         </body>
       </html>
     `);
