@@ -1,40 +1,9 @@
+const { conn, Bookmark, Category } = require('./db');
 const express = require('express');
 const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(require('method-override')('_method'));
 
-const Sequelize = require('sequelize');
-const conn = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost/bookmarker');
-
-const Category = conn.define('category', {
-  name: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true
-    }
-  }
-});
-
-const Bookmark = conn.define('bookmark', {
-  name: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: true
-    }
-  },
-  url: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    validate: {
-      isUrl: true 
-    }
-  }
-});
-
-Bookmark.belongsTo(Category);
-Category.hasMany(Bookmark);
 
 app.get('/categories/:id', async(req, res, next)=> {
   try {
