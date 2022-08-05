@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 app.use(express.urlencoded({ extended: false }));
+app.use(require('method-override')('_method'));
 
 const Sequelize = require('sequelize');
 const conn = new Sequelize(process.env.DATABASE_URL || 'postgres://localhost/bookmarker');
@@ -92,6 +93,9 @@ app.get('/', async(req, res, next)=> {
             form > * {
               margin: 1rem;
             }
+            li form {
+            display: inline;
+            }
           </style>
         </head>
         <body>
@@ -103,6 +107,9 @@ app.get('/', async(req, res, next)=> {
                   return `
                     <li>
                       ${ bookmark.name } 
+                      <form method='POST' action='/bookmarks/${bookmark.id}?_method=delete'>
+                        <button>x</button>
+                      </form>
                       <a href='/categories/${ bookmark.categoryId }'>
                         ${ bookmark.category.name }
                       </a>
@@ -131,6 +138,17 @@ app.get('/', async(req, res, next)=> {
         </body>
       </html>
     `);
+  }
+  catch(ex){
+    next(ex);
+  }
+});
+
+app.delete('/bookmarks/:id', async(req, res, next)=> {
+  try {
+    const bookmark = await Bookmark.findByPk(req.params.id);
+    await bookmark.destroy();
+    res.redirect('/');
   }
   catch(ex){
     next(ex);
