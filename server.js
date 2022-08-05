@@ -22,10 +22,10 @@ const Bookmark = conn.define('bookmark', {
 Bookmark.belongsTo(Category);
 
 app.get('/', async(req, res, next)=> {
-  const bookmarks = await Bookmark.findAll({
-    include: [ Category ]
-  });
   try {
+    const bookmarks = await Bookmark.findAll({
+      include: [ Category ]
+    });
     res.send(`
       <html>
         <head>
