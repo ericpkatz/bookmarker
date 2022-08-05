@@ -4,48 +4,9 @@ const app = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(require('method-override')('_method'));
 
+app.use('/categories', require('./routes/categories'));
+app.use('/bookmarks', require('./routes/bookmarks'));
 
-app.get('/categories/:id', async(req, res, next)=> {
-  try {
-    const category = await Category.findByPk(req.params.id, {
-      include: [ Bookmark ]
-    });
-    res.send(`
-      <html>
-        <head>
-        </head>
-        <body>
-          <h1>Bookmarker - ${ category.name }</h1>
-          <a href='/'>Home</a>
-          <ul>
-            ${
-              category.bookmarks.map( bookmark => {
-                return `
-                  <li>
-                    ${ bookmark.name }
-                  </li>
-                `;
-              }).join('')
-            }
-          </ul>
-        </body>
-      </html>
-    `);
-  }
-  catch(ex){
-    next(ex);
-  }
-});
-
-app.post('/bookmarks', async(req, res, next)=> {
-  try {
-    const bookmark = await Bookmark.create(req.body);
-    res.redirect(`/categories/${bookmark.categoryId}`);
-  }
-  catch(ex){
-    next(ex);
-  }
-});
 app.get('/', async(req, res, next)=> {
   try {
     const bookmarks = await Bookmark.findAll({
@@ -125,27 +86,6 @@ app.get('/', async(req, res, next)=> {
         </body>
       </html>
     `);
-  }
-  catch(ex){
-    next(ex);
-  }
-});
-
-app.post('/categories', async(req, res, next)=> {
-  try {
-    await Category.create(req.body);
-    res.redirect('/');
-  }
-  catch(ex){
-    next(ex);
-  }
-});
-
-app.delete('/bookmarks/:id', async(req, res, next)=> {
-  try {
-    const bookmark = await Bookmark.findByPk(req.params.id);
-    await bookmark.destroy();
-    res.redirect('/');
   }
   catch(ex){
     next(ex);
