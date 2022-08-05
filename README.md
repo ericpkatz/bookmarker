@@ -8,5 +8,5 @@
     - introduce method-override
   - create-category <a href='https://github.com/ericpkatz/bookmarker/compare/delete-a-bookmark...create-category?expand=1'>Compare</a>
   - validation <a href='https://github.com/ericpkatz/bookmarker/compare/create-category...validation?expand=1'>Compare</a>
-  - refactor-data-layer
+  - refactor-data-layer <a href='https://github.com/ericpkatz/bookmarker/compare/create-category...refactor-data-layer?expand=1'>Compare</a>
   - refactor-routes
