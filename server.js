@@ -20,6 +20,39 @@ const Bookmark = conn.define('bookmark', {
 });
 
 Bookmark.belongsTo(Category);
+Category.hasMany(Bookmark);
+
+app.get('/categories/:id', async(req, res, next)=> {
+  try {
+    const category = await Category.findByPk(req.params.id, {
+      include: [ Bookmark ]
+    });
+    res.send(`
+      <html>
+        <head>
+        </head>
+        <body>
+          <h1>Bookmarker - ${ category.name }</h1>
+          <ul>
+            ${
+              category.bookmarks.map( bookmark => {
+                console.log(bookmark);
+                return `
+                  <li>
+                    ${ bookmark.name }
+                  </li>
+                `;
+              }).join('')
+            }
+          </ul>
+        </body>
+      </html>
+    `);
+  }
+  catch(ex){
+    next(ex);
+  }
+});
 
 app.get('/', async(req, res, next)=> {
   try {
